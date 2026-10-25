@@ -1,0 +1,29 @@
+[
+  {
+    "file": "dist/notion-math-editor.zh-CN.html",
+    "bytes": 1457622,
+    "sha256": "558e876444d1dde8e708c01551f10fa4bc0a0fe4bf340be249478aa25e8d3bd6",
+    "inlineScripts": 1,
+    "embeddedFontFaces": 20,
+    "externalCssResources": [],
+    "generatedAt": "2026-10-25T14:56:33.115Z"
+  },
+  {
+    "file": "dist/notion-math-editor.en.html",
+    "bytes": 1465093,
+    "sha256": "617d3f51f1a3c61cbe3724801eb8cbcc808000968afa780ed9c038243dc896b3",
+    "inlineScripts": 1,
+    "embeddedFontFaces": 20,
+    "externalCssResources": [],
+    "generatedAt": "2026-10-25T14:56:33.129Z"
+  },
+  {
+    "file": "dist/notion-math-editor.html",
+    "bytes": 1457622,
+    "sha256": "558e876444d1dde8e708c01551f10fa4bc0a0fe4bf340be249478aa25e8d3bd6",
+    "inlineScripts": 1,
+    "embeddedFontFaces": 20,
+    "externalCssResources": [],
+    "generatedAt": "2026-10-25T14:56:33.142Z"
+  }
+]

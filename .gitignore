@@ -1,0 +1,8 @@
+node_modules/
+test-results/
+playwright-report/
+.npm-cache/
+work/
+docs/e2e-results.json
+docs/stage0-results.json
+docs/PAUSED.md

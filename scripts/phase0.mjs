@@ -1,0 +1,51 @@
+import { chromium } from '@playwright/test';
+import { readFile, mkdir, copyFile, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+const folder = resolve('../../work/stage0-isolated');
+await mkdir(folder, { recursive: true });
+await copyFile('dist-stage0/stage0.html', resolve(folder, 'stage0.html'));
+const browser = await chromium.launch({ channel: 'msedge', headless: true });
+const context = await browser.newContext({ offline: true });
+const page = await context.newPage();
+const network = [], errors = [];
+page.on('request', r => { if (/^https?:/.test(r.url())) network.push(r.url()); });
+page.on('pageerror', e => errors.push(e.message));
+await page.goto(pathToFileURL(resolve(folder, 'stage0.html')).href);
+async function verify(root) {
+  await root.locator('math-field').waitFor();
+  await root.locator('#fraction').click();
+  await root.locator('#export').click();
+  const fraction = await root.locator('#latex').inputValue();
+  if (!fraction.includes('\\frac')) throw Error('Fraction insertion failed');
+  await root.locator('math-field').evaluate(f => { f.setValue(''); });
+  await root.locator('#integral').click();
+  await root.locator('#export').click();
+  if (!(await root.locator('#latex').inputValue()).includes('\\int')) throw Error('Integral insertion failed');
+  return root.locator('math-field').evaluate(async () => {
+    await document.fonts.load('24px KaTeX_Main');
+    await document.fonts.load('italic 24px KaTeX_Math');
+    await document.fonts.ready;
+    const faces = [...document.fonts];
+    if (!faces.some(f => f.family === 'KaTeX_Main' && f.status === 'loaded')) throw Error('Embedded font failed');
+    return { fontFaces: faces.length, loaded: faces.filter(f => f.status === 'loaded').length };
+  });
+}
+const standalone = await verify(page);
+const html = await readFile('dist-stage0/stage0.html', 'utf8');
+await page.goto('about:blank');
+await page.evaluate(html => {
+  const iframe = document.createElement('iframe');
+  iframe.sandbox.add('allow-scripts');
+  iframe.style.cssText = 'width:600px;height:500px';
+  iframe.srcdoc = html.replace('<head>', `<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src data:; img-src data:; connect-src 'none'">`);
+  document.body.append(iframe);
+}, html);
+const sandbox = await verify(page.frameLocator('iframe'));
+await page.screenshot({ path: resolve('../../work/stage0-sandbox.png') });
+await browser.close();
+if (network.length || errors.length) throw Error(JSON.stringify({ network, errors }));
+const report = { standalone, sandbox, externalRequests: network, pageErrors: errors, notion: 'Notion 实机验证待完成' };
+await mkdir('docs', { recursive: true });
+await writeFile('docs/stage0-results.json', JSON.stringify(report, null, 2));
+console.log(JSON.stringify(report, null, 2));

@@ -1,0 +1,33 @@
+{
+  "name": "notion-math-editor",
+  "version": "1.1.0",
+  "description": "离线可视化高等数学公式编辑器",
+  "private": true,
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build --mode zh-CN && vite build --mode en",
+    "build:stage0": "vite build --mode feasibility",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "verify:html": "node scripts/verify-html.mjs",
+    "preview": "vite preview --host 127.0.0.1",
+    "test:stage0": "node scripts/phase0.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "module",
+  "dependencies": {
+    "katex": "0.19.1",
+    "mathlive": "0.111.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "@types/katex": "0.16.8",
+    "@types/node": "26.6.5",
+    "typescript": "7.0.2",
+    "vite": "8.3.5",
+    "vite-plugin-singlefile": "2.3.4",
+    "vitest": "5.0.5"
+  }
+}
